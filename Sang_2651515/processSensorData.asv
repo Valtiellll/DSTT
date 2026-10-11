@@ -1,0 +1,59 @@
+
+function [B, status, valid, V, I, R, P] = processSensorData(A)
+
+% Đọc và lưu size A để làm loop 
+[Ax, Ay] = size(A);
+
+% Trích các cột cần dùng từ ma trận 
+mode_code = A(:, Ay);
+V = A(:, 5);
+I = A(:, 4);
+heat = A(:, 3);
+
+% Xác định các mẫu hợp lệ 
+valid = mode_code ~= 0;
+
+% Tạo trước các vector kết quả 
+R = zeros(Ax, 1);
+P = zeros(Ax, 1);
+
+% Tính công suất cho các mẫu hợp lệ (cái nào không valid thì bỏ qua)
+P(valid) = V(valid) .* I(valid);
+
+% Chi tinh dien tro khi mau hop le va dong dien khac 0
+nonzero_current = valid & (I ~= 0);
+R(nonzero_current) = V(nonzero_current) ./ I(nonzero_current);
+
+% Danh dau cac gia tri khong duoc tinh hoac khong xac dinh
+P(~valid) = NaN;
+R(~valid) = NaN;
+R(valid & (I == 0)) = NaN;
+
+% Khoi tao vector trang thai cho tung mau
+status = strings(Ax, 1);
+
+% Phan loai trang thai
+% Uu tien INVALID truoc khi xet nhiet do
+for i = 1:Ax
+    if ~valid(i)
+        status(i) = "INVALID";
+
+    elseif heat(i) >= 33
+        status(i) = "HIGH_TEMP";
+
+    elseif heat(i) < 25
+        status(i) = "LOW_TEMP";
+
+    else
+        status(i) = "NORMAL";
+    end
+end
+
+% Tao ma tran B: du lieu goc + 2 cot ket qua
+% Cot Ay+1 la dien tro R; cot Ay+2 la cong suat P
+B = [A, zeros(Ax, 2)];
+
+B(:, Ay + 1) = R;
+B(:, Ay + 2) = P;
+
+end
