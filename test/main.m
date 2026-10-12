@@ -70,7 +70,7 @@ load('results.mat');
 % Kiểm tra lại file CSV đầu ra
 out = readmatrix('processed_results.csv');
 
-disp('Đã hoàn thành!');
+disp('Đã hoàn thành');
 
 
 %% HÀM XỬ LÝ DỮ LIỆU
