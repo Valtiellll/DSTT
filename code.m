@@ -1,5 +1,11 @@
-% Đọc ảnh từ file
-img = imread('image1.jpg');
+folder = 'orl'; % Thay bằng tên hoặc đường dẫn thư mục
+
+% Lấy tất cả file ảnh (.png, .jpg, .jpeg, .pgm) kể cả trong thư mục con
+files = [dir(fullfile(folder, '*.png'));
+    dir(fullfile(folder, '*.jpg'));
+    dir(fullfile(folder, '*.jpeg'));
+    dir(fullfile(folder, '*.pgm'))];
+P = length(files); % Số lượng ảnh
 
 % Nếu là ảnh màu (RGB), chuyển sang ảnh xám (Grayscale)
 if size(img, 3) == 3
